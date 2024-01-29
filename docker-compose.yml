@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  setsuna:
+    container_name: setsuna
+    tty: true
+    image: nijigasaki:3
+    volumes:
+      - ./src:/data/ayumu
+    sysctls:
+      - net.ipv4.ip_forward=1
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    command: python3 client.py -s shizuku -p 11451
+  shizuku:
+    container_name: shizuku
+    tty: true
+    image: nijigasaki:3
+    volumes:
+      - ./src:/data/ayumu
+    sysctls:
+      - net.ipv4.ip_forward=1
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    command: python3 server.py -p 11451
