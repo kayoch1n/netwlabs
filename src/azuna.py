@@ -5,25 +5,25 @@ IFF_TUN = 0x0001
 IFF_NO_PI = 0x1000
 TUNSETIFF = 0x400454ca
 
-def create_tun(if_addr, dev_name):
+def create_tun(if_addr, name):
     import struct
     import fcntl
     import re
 
     f = open("/dev/net/tun", buffering=0, mode='r+b')
     
-    bs = struct.pack("16sH", dev_name.encode(), IFF_TUN|IFF_NO_PI)
+    bs = struct.pack("16sH", name.encode(), IFF_TUN|IFF_NO_PI)
     fcntl.ioctl(f, TUNSETIFF, bs, False)
 
-    output = run(f'ip link show dev {dev_name}').decode()
+    output = run(f'ip link show dev {name}').decode()
     m = re.search(output, r'mtu ([0-9]+)')
     try:
         mtu = m.group(1)
     except:
         mtu = '1500'
 
-    run(f'ip addr add {if_addr} dev {dev_name}')
-    run(f'ip link set dev {dev_name} up')
+    run(f'ip addr add {if_addr} dev {name}')
+    run(f'ip link set dev {name} up')
     return f, int(mtu)
 
 def encrypt(data: bytes):
@@ -42,7 +42,7 @@ def get_logger(name):
     stdout_handler.setLevel(logging.DEBUG)
     stdout_handler.setFormatter(formatter)
 
-    file_handler = logging.FileHandler(f'{name}.log')
+    file_handler = logging.FileHandler(f'{name}.log', mode='w')
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
 
@@ -80,4 +80,4 @@ def run(cmd):
     if isinstance(cmd, str):
         cmd = ['sh', '-c', cmd]
 
-    return subprocess.check_output(cmd)
+    return subprocess.run(cmd, check=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE).stdout
