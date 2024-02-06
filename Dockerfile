@@ -5,4 +5,6 @@ RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
     -i.bak \
     /etc/yum.repos.d/CentOS-*.repo
 
-RUN yum install net-tools iproute vim-enhanced conntrack-tools nftables python3 -y
+RUN yum install net-tools iproute vim-enhanced conntrack-tools nftables python3 less -y
+
+WORKDIR /data/ayumu

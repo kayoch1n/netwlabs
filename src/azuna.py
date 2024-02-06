@@ -27,7 +27,8 @@ def create_tun(if_addr, name):
     return f, int(mtu)
 
 def encrypt(data: bytes):
-    return bytes(b^0xff for b in data)
+    # return bytes(b^0xff for b in data)
+    return data
 
 decrypt = encrypt
 

@@ -13,7 +13,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', '--listen', default='0.0.0.0')
     parser.add_argument('-p', '--port', required=True, type=int)
-    parser.add_argument('--dev_name', default='yu0')
+    parser.add_argument('--dev_name', default='tun0')
     parser.add_argument('--dev_if_addr', default='10.8.0.1/16')
 
     args = parser.parse_args()
