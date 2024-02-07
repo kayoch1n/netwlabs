@@ -12,3 +12,6 @@ shizuku:
 
 setsuna:
 	@docker exec -it setsuna bash
+
+kanata:
+	@docker exec -it kanata bash

@@ -11,4 +11,8 @@ docker build -t nijigasaki:3 .
 make upd
 # 关闭容器
 make down
+# 进入 client
+make setsuna
+# 进入 server
+make shizuku
 ```

@@ -1,8 +1,9 @@
 version: "3.8"
 services:
   setsuna:
+    # VPN client 同时也是 VPN 网关
     container_name: setsuna
-    tty: true
+    hostname: setsuna
     image: nijigasaki:3
     volumes:
       - ./src:/data/ayumu
@@ -12,8 +13,9 @@ services:
       - /dev/net/tun
     command: python3 client.py -s shizuku -p 11451
   shizuku:
+    # VPN server
     container_name: shizuku
-    tty: true
+    hostname: shizuku
     image: nijigasaki:3
     volumes:
       - ./src:/data/ayumu
@@ -22,3 +24,17 @@ services:
     devices:
       - /dev/net/tun
     command: python3 server.py -p 11451
+  kanata:
+  # 蹭 VPN 流量的
+    container_name: kanata
+    hostname: kanata
+    depends_on:
+      - setsuna
+    tty: true
+    image: nijigasaki:3
+    volumes:
+      - ./src:/data/ayumu
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=0

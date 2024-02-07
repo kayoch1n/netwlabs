@@ -68,11 +68,12 @@ def loop(f, s: socket.socket, mtu=1500, logger=None, address=None):
             if f in rs:
                 data = f.read(mtu)
                 s.sendto(encrypt(data), address)
-                logger.debug("%d byte(s) sent to %s", len(data), address)
+                # FIXME: ipv4 only
+                src, dst = data[12:16], data[16:20]
+                logger.info("%d byte(s) %s -> %s", len(data), socket.inet_ntoa(src), socket.inet_ntoa(dst))
         
             if s in rs:
                 data, address = s.recvfrom(mtu)
-                logger.info("%d byte(s) received from %s", len(data), address)
                 f.write(decrypt(data))
 
 def run(cmd):
