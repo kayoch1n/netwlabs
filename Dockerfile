@@ -1,10 +1,5 @@
-FROM centos:7
+FROM ubuntu:22.04
 
-RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
-    -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos|g' \
-    -i.bak \
-    /etc/yum.repos.d/CentOS-*.repo
+RUN apt-get update && apt-get install iproute2 conntrack iptables net-tools python3 curl iputils-ping vim -y
 
-RUN yum install net-tools iproute vim-enhanced conntrack-tools nftables python3 less -y
-
-WORKDIR /data/ayumu
+WORKDIR /data/azuna

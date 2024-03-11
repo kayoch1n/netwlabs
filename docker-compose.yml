@@ -4,9 +4,9 @@ services:
     # VPN client 同时也是 VPN 网关
     container_name: setsuna
     hostname: setsuna
-    image: nijigasaki:3
+    image: azuna:net
     volumes:
-      - ./src:/data/ayumu
+      - ./src:/data/azuna
     cap_add:
       - NET_ADMIN
     devices:
@@ -16,9 +16,9 @@ services:
     # VPN server
     container_name: shizuku
     hostname: shizuku
-    image: nijigasaki:3
+    image: azuna:net 
     volumes:
-      - ./src:/data/ayumu
+      - ./src:/data/azuna
     cap_add:
       - NET_ADMIN
     devices:
@@ -31,9 +31,9 @@ services:
     depends_on:
       - setsuna
     tty: true
-    image: nijigasaki:3
+    image: azuna:net
     volumes:
-      - ./src:/data/ayumu
+      - ./src:/data/azuna
     cap_add:
       - NET_ADMIN
     sysctls:

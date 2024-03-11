@@ -7,11 +7,6 @@ down:
 upd:
 	@docker-compose up -d
 
-shizuku:
-	@docker exec -it shizuku bash
+exec-%:
+	@docker exec -it $* bash
 
-setsuna:
-	@docker exec -it setsuna bash
-
-kanata:
-	@docker exec -it kanata bash
