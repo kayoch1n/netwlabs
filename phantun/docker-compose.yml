@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  setsuna:
+    # VPN client 同时也是 VPN 网关
+    container_name: setsuna
+    hostname: setsuna
+    image: azuna:net
+    volumes:
+      - ./../src:/data/azuna
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    command: python3 client.py -s shioriko -p 11984
+    depends_on:
+      - shioriko
+  shioriko:
+    image: azuna:phantun
+    container_name: shioriko
+    environment:
+      USE_IPTABLES_NFT_BACKEND: 0
+      RUST_LOG: INFO
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - .:/data/azuna-shioriko
+    entrypoint: /data/azuna-shioriko/phantun_client_entrypoint.sh
+    depends_on:
+      - mia
+  mia:
+    image: azuna:phantun
+    container_name: mia
+    environment:
+      USE_IPTABLES_NFT_BACKEND: 0
+      RUST_LOG: INFO
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    command: >
+      phantun-server --local 11985 --remote shizuku:11451 --ipv4-only
+    depends_on:
+      - shizuku
+  shizuku:
+    # VPN server
+    container_name: shizuku
+    hostname: shizuku
+    image: azuna:net 
+    volumes:
+      - ./../src:/data/azuna
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    command: python3 server.py -p 11451
