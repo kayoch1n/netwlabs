@@ -1,0 +1,44 @@
+services:
+  ayumu:
+    image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net-20241225
+    hostname: ayumu
+    container_name: ayumu
+    cap_add:
+      - NET_ADMIN
+    tty: true
+    networks:
+      - ayupyon
+    depends_on:
+      - router
+  setsuna:
+    image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net-20241225
+    hostname: setsuna
+    container_name: setsuna
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - chase
+    depends_on:
+      - router
+    entrypoint: bash
+    command: ["-c", "while true ; do iperf3 -s -1 ; done"]
+  router:
+    image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net
+    hostname: router
+    container_name: router
+    cap_add:
+      - NET_ADMIN
+    tty: true
+    networks:  # router 衔接上述两个容器的网络
+      - chase
+      - ayupyon
+  shioriko:
+    image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net-20241225
+    container_name: shioriko
+    entrypoint: bash
+    command: ["-c", "while sleep 0.01 ; do ss --no-header -eint4 ; done"]
+    network_mode: "service:ayumu"  # sidecar 挂到其中一个容器上
+networks:
+  chase:
+  ayupyon:
+
