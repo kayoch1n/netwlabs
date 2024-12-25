@@ -6,7 +6,7 @@ services:
     hostname: setsuna
     image: azuna:net
     volumes:
-      - ./../demo-vpn/src:/data/azuna
+      - ./../lab-vpn/src:/data/azuna
     cap_add:
       - NET_ADMIN
     devices:
@@ -49,7 +49,7 @@ services:
     hostname: shizuku
     image: azuna:net 
     volumes:
-      - ./../demo-vpn/src:/data/azuna
+      - ./../lab-vpn/src:/data/azuna
     cap_add:
       - NET_ADMIN
     devices:
