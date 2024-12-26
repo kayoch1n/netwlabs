@@ -5,11 +5,15 @@ services:
     container_name: ayumu
     cap_add:
       - NET_ADMIN
-    tty: true
     networks:
       - ayupyon
     depends_on:
       - router
+    entrypoint: bash
+    command: >
+      -c "echo `dig ayumu +short` alter default route && 
+      ip route change default via `dig router +short` &&
+      tail -f /dev/null"
   setsuna:
     image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net-20241225
     hostname: setsuna
@@ -21,17 +25,35 @@ services:
     depends_on:
       - router
     entrypoint: bash
-    command: ["-c", "while true ; do iperf3 -s -1 ; done"]
+    command: >
+      -c "echo `dig setsuna +short` alter default route &&
+      ip route change default via `dig router +short` &&
+      while true ; do iperf3 -s -1 ; done"
   router:
     image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net
     hostname: router
     container_name: router
     cap_add:
       - NET_ADMIN
-    tty: true
     networks:  # router 衔接上述两个容器的网络
       - chase
       - ayupyon
+    entrypoint: bash
+    command: > 
+      -c "echo 'add iptables rule...' &&
+      iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE &&
+      iptables -A FORWARD -i eth0 -j ACCEPT &&
+      iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE &&
+      iptables -A FORWARD -i eth1 -j ACCEPT && 
+      echo 'add traffic control...' &&
+      tc qdisc add dev eth0 root handle 1: htb default 114 &&
+      tc class add dev eth0 parent 1: classid 1:114 htb rate 1Mbit &&
+      tc qdisc add dev eth0 parent 1:114 handle 514: bfifo limit 0.1MB &&
+      tc qdisc add dev eth1 root handle 1: htb default 114 &&
+      tc class add dev eth1 parent 1: classid 1:114 htb rate 1Mbit &&
+      tc qdisc add dev eth1 parent 1:114 handle 514: bfifo limit 0.1MB &&
+      echo 'done' &&
+      tail -f /dev/null"
   shioriko:
     image: ccr.ccs.tencentyun.com/nijigasaki/azuna:net-20241225
     container_name: shioriko
